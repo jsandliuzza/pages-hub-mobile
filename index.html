@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e0e10">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="robots" content="noindex">
+<title>Pages Hub</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#0e0e10; --subtle:#141417; --elev:#1b1b1f; --base:#121215;
+  --b:#26262b; --bs:#3a3a41; --focus:#6b9bff;
+  --t1:#f4f4f5; --t2:#b4b4bb; --t3:#7c7c85; --accent:#7aa7ff;
+  --eng:#5b8def; --exp:#3fb68b; --anim:#e3a33b; --other:#9a9aa3;
+  --r:22px;
+  --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--t1);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overscroll-behavior:none}
+body{overflow:hidden}
+.deck{position:fixed;inset:0;overflow-y:scroll;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain}
+.deck::-webkit-scrollbar{display:none}
+.slide{height:100vh;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:calc(var(--safe-t) + 64px) 18px calc(var(--safe-b) + 108px)}
+.card{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:18px;
+  min-height:58%;padding:26px 22px 20px;border-radius:var(--r);
+  background:linear-gradient(180deg,var(--elev),var(--base));border:1px solid var(--bs);
+  color:inherit;text-decoration:none;box-shadow:0 18px 40px -18px rgba(0,0,0,.7);
+  transition:transform .18s ease,border-color .18s ease}
+.card:active{transform:scale(.985);border-color:var(--focus)}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;border-radius:var(--r) var(--r) 0 0;background:var(--acc)}
+.meta{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.area{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--t2)}
+.dot{width:10px;height:10px;border-radius:99px;background:var(--acc);flex-shrink:0}
+.owner{font-size:12px;font-weight:600;letter-spacing:.02em;padding:5px 11px;border-radius:99px;
+  color:var(--acc);background:color-mix(in srgb,var(--acc) 15%,transparent);border:1px solid color-mix(in srgb,var(--acc) 40%,transparent)}
+h2{margin:6px 0 0;font-size:27px;line-height:1.18;letter-spacing:-.015em;font-weight:650}
+.blurb{margin:0;font-size:16px;line-height:1.5;color:var(--t2)}
+.date{font-size:12px;color:var(--t3);margin-top:2px}
+.open{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-radius:16px;
+  background:color-mix(in srgb,var(--accent) 14%,var(--subtle));border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);
+  font-size:16px;font-weight:600;color:var(--accent)}
+.open span:last-child{font-size:20px}
+.hint{text-align:center;font-size:12px;color:var(--t3);margin-top:14px}
+/* top bar */
+.top{position:fixed;left:0;right:0;top:0;z-index:5;padding:calc(var(--safe-t) + 12px) 18px 10px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(180deg,var(--bg) 60%,transparent);pointer-events:none}
+.brand{font-weight:650;font-size:17px;letter-spacing:-.01em}
+.brand small{display:block;font-size:11px;font-weight:500;color:var(--t3);letter-spacing:0}
+.pos{font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;color:var(--t2);
+  padding:6px 12px;border-radius:99px;background:var(--subtle);border:1px solid var(--b)}
+/* progress rail */
+.rail{position:fixed;right:6px;top:50%;transform:translateY(-50%);z-index:5;display:flex;flex-direction:column;gap:5px;pointer-events:none}
+.rail i{display:block;width:4px;height:8px;border-radius:9px;background:var(--bs);transition:height .2s,background .2s}
+.rail i.on{height:22px;background:var(--accent)}
+/* bottom bar */
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:6;padding:12px 12px calc(var(--safe-b) + 12px);
+  background:linear-gradient(0deg,var(--bg) 65%,transparent)}
+.filters{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.filters::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;min-height:44px;padding:0 13px;border-radius:99px;border:1px solid var(--b);background:var(--subtle);
+  color:var(--t2);font:inherit;font-size:14px;font-weight:500;display:flex;align-items:center;gap:6px}
+.chip b{font-weight:600;color:var(--t3);font-size:12px}
+.chip.on{background:var(--t1);color:#111;border-color:var(--t1)}
+.chip.on b{color:#555}
+.chip.idx{background:var(--elev);color:var(--t1)}
+/* index sheet */
+.sheet{position:fixed;inset:0;z-index:10;display:none;background:rgba(0,0,0,.55)}
+.sheet.show{display:block}
+.panel{position:absolute;left:0;right:0;bottom:0;max-height:78%;overflow-y:auto;background:var(--subtle);
+  border-top:1px solid var(--bs);border-radius:22px 22px 0 0;padding:10px 12px calc(var(--safe-b) + 16px)}
+.grab{width:40px;height:5px;border-radius:9px;background:var(--bs);margin:4px auto 12px}
+.row{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:10px 12px;border:0;border-radius:14px;
+  background:transparent;color:var(--t1);font:inherit;text-align:left}
+.row:active{background:var(--elev)}
+.row .n{width:26px;font-size:12px;color:var(--t3);font-variant-numeric:tabular-nums}
+.row .tt{flex:1;font-size:15px;line-height:1.3}
+.row .ob{font-size:11px;font-weight:600;color:var(--acc)}
+.end{color:var(--t3);text-align:center}
+.end h2{color:var(--t1)}
+.end a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">Pages Hub<small>Lumi · Datu · Anim</small></div>
+  <div class="pos" id="pos" aria-live="polite">1 / 1</div>
+</header>
+<nav class="rail" id="rail" aria-hidden="true"></nav>
+<main class="deck" id="deck" aria-label="Swipe up and down to flip through Pages"></main>
+<footer class="bottom">
+  <div class="filters" id="filters" role="toolbar" aria-label="Filter by bot"></div>
+</footer>
+<div class="sheet" id="sheet" aria-hidden="true">
+  <div class="panel" role="dialog" aria-label="All Pages">
+    <div class="grab"></div>
+    <div id="list"></div>
+  </div>
+</div>
+<script src="pages.js"></script>
+<script>
+(function(){
+  var PAGES = window.HUB_PAGES, BASE = window.HUB_BASE;
+  var AREA_COLOR = {"Engineering & 3D Print":"var(--eng)","Expenses":"var(--exp)","FOTW Animation":"var(--anim)"};
+  var OWNER_COLOR = {Lumi:"var(--accent)",Datu:"var(--eng)",Anim:"var(--anim)"};
+  var deck = document.getElementById('deck'), pos = document.getElementById('pos'),
+      rail = document.getElementById('rail'), filters = document.getElementById('filters'),
+      sheet = document.getElementById('sheet'), list = document.getElementById('list');
+  var KEY = 'pageshub.filter';
+  var filter = localStorage.getItem(KEY) || 'All';
+  var view = [];
+
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function acc(p){return AREA_COLOR[p.area] || 'var(--other)';}
+
+  function renderFilters(){
+    var owners = ['All','Lumi','Datu','Anim'];
+    var html = '<button class="chip idx" id="idxBtn" aria-label="Open the full list">☰ Index</button>';
+    owners.forEach(function(o){
+      var c = o==='All' ? PAGES.length : PAGES.filter(function(p){return p.owner===o;}).length;
+      if (!c) return;
+      html += '<button class="chip'+(o===filter?' on':'')+'" data-f="'+o+'">'+o+' <b>'+c+'</b></button>';
+    });
+    filters.innerHTML = html;
+  }
+
+  function render(){
+    view = PAGES.filter(function(p){return filter==='All' || p.owner===filter;});
+    var html = '';
+    view.forEach(function(p,i){
+      html += '<section class="slide" data-i="'+i+'">'+
+        '<a class="card" style="--acc:'+acc(p)+'" href="'+BASE+p.id+'" target="_blank" rel="noopener">'+
+          '<div>'+
+            '<div class="meta"><span class="area"><span class="dot"></span>'+esc(p.area)+'</span>'+
+            '<span class="owner" style="--acc:'+(OWNER_COLOR[p.owner]||'var(--other)')+'">'+esc(p.owner)+'</span></div>'+
+            '<h2>'+esc(p.title)+'</h2><div class="date">Updated '+esc(p.updated)+'</div>'+
+          '</div>'+
+          '<p class="blurb">'+esc(p.blurb)+'</p>'+
+          '<div class="open"><span>Tap to open Page</span><span>↗</span></div>'+
+        '</a>'+
+        (i===0 ? '<div class="hint">Swipe up for the next Page</div>' : '')+
+      '</section>';
+    });
+    html += '<section class="slide end"><div><h2>That\'s all '+view.length+'</h2>'+
+      '<p>Swipe back up, or open the <a href="'+window.HUB_DESKTOP+'" target="_blank" rel="noopener">full Pages Hub</a>.</p></div></section>';
+    deck.innerHTML = html;
+    rail.innerHTML = view.map(function(){return '<i></i>';}).join('');
+    list.innerHTML = view.map(function(p,i){
+      return '<button class="row" data-go="'+i+'" style="--acc:'+(OWNER_COLOR[p.owner]||'var(--other)')+'"><span class="n">'+(i+1)+'</span><span class="tt">'+esc(p.title)+'</span><span class="ob">'+esc(p.owner)+'</span></button>';
+    }).join('');
+    deck.scrollTop = 0;
+    update();
+  }
+
+  function current(){ return Math.round(deck.scrollTop / deck.clientHeight); }
+  function update(){
+    var i = Math.min(current(), view.length-1);
+    pos.textContent = (i+1)+' / '+view.length;
+    var dots = rail.children;
+    for (var k=0;k<dots.length;k++) dots[k].className = k===i ? 'on' : '';
+  }
+  var raf; deck.addEventListener('scroll',function(){ cancelAnimationFrame(raf); raf = requestAnimationFrame(update); },{passive:true});
+  window.addEventListener('resize', update);
+
+  filters.addEventListener('click',function(e){
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.id==='idxBtn'){ sheet.classList.add('show'); sheet.setAttribute('aria-hidden','false'); return; }
+    filter = b.getAttribute('data-f'); localStorage.setItem(KEY, filter);
+    renderFilters(); render();
+  });
+  sheet.addEventListener('click',function(e){
+    var r = e.target.closest('[data-go]');
+    if (r){ deck.scrollTo({top: +r.getAttribute('data-go') * deck.clientHeight, behavior:'instant' in document.documentElement.style ? 'auto':'auto'}); }
+    if (r || e.target===sheet){ sheet.classList.remove('show'); sheet.setAttribute('aria-hidden','true'); }
+  });
+  document.addEventListener('keydown',function(e){
+    if (e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); deck.scrollTo({top:(current()+(e.key==='ArrowDown'?1:-1))*deck.clientHeight,behavior:'smooth'}); }
+  });
+
+  renderFilters(); render();
+  if ('serviceWorker' in navigator) window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js'); });
+})();
+</script>
+</body>
+</html>
